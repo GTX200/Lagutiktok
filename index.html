@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Separuh Aku - Noah</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Prevent scrollbar if content is small */
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #2a2a2a;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            max-width: 80%;
+        }
+
+        h1 {
+            color: #4CAF50; /* Green accent for title */
+            margin-bottom: 30px;
+        }
+
+        .lyric-line {
+            font-size: 1.8em; /* Slightly larger for readability */
+            margin-bottom: 15px;
+            min-height: 1.5em; /* Ensure line height even when empty */
+            color: #f0f0f0;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>== Separuh Aku - Noah ==</h1>
+        <div id="lyrics-display"></div>
+        <div class="footer">// Code by Micola Arighi</div>
+    </div>
+
+    <script>
+        const lirikData = [
+            { text: "Dengar Laraku", charDelay: 100 }, // 0.1s
+            { text: "Suara hati ini memanggil namamu", charDelay: 90 }, // 0.09s
+            { text: "Karena separuh aku", charDelay: 90 },
+            { text: "Menyentuh laramu", charDelay: 90 },
+            { text: "Semua lukamu t'lah menjadi lirihku", charDelay: 90 },
+            { text: "Kar'na separuh aku", charDelay: 90 },
+            { text: "Dirimu", charDelay: 90 },
+        ];
+
+        const lineDelays = [300, 200, 300, 400, 600, 300, 300]; // in milliseconds
+
+        const lyricsDisplay = document.getElementById('lyrics-display');
+        let lineIndex = 0;
+
+        async function typeWriterEffect() {
+            if (lineIndex < lirikData.length) {
+                const currentLineData = lirikData[lineIndex];
+                const text = currentLineData.text;
+                const charDelay = currentLineData.charDelay;
+                const lineDelay = lineDelays[lineIndex];
+
+                const p = document.createElement('p');
+                p.classList.add('lyric-line');
+                lyricsDisplay.appendChild(p);
+
+                for (let i = 0; i < text.length; i++) {
+                    p.textContent += text.charAt(i);
+                    await new Promise(resolve => setTimeout(resolve, charDelay));
+                }
+
+                lineIndex++;
+                await new Promise(resolve => setTimeout(resolve, lineDelay));
+                typeWriterEffect(); // Call itself for the next line
+            }
+        }
+
+        // Start the effect when the page loads
+        document.addEventListener('DOMContentLoaded', typeWriterEffect);
+    </script>
+</body>
+</html>
