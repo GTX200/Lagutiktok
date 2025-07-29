@@ -1,97 +1,186 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Separuh Aku - Noah</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1a1a1a;
-            color: #e0e0e0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow: hidden; /* Prevent scrollbar if content is small */
-        }
+  <meta charset="UTF-8">
+  <title>ghz.oke</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: black;
+      font-family: 'Courier New', monospace;
+      color: yellow;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
 
-        .container {
-            text-align: center;
-            padding: 20px;
-            border-radius: 10px;
-            background-color: #2a2a2a;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-            max-width: 80%;
-        }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
 
-        h1 {
-            color: #4CAF50; /* Green accent for title */
-            margin-bottom: 30px;
-        }
+    .container {
+      z-index: 5;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px yellow;
+      max-width: 90%;
+      text-align: center;
+    }
 
-        .lyric-line {
-            font-size: 1.8em; /* Slightly larger for readability */
-            margin-bottom: 15px;
-            min-height: 1.5em; /* Ensure line height even when empty */
-            color: #f0f0f0;
-        }
+    video {
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px yellow;
+    }
 
-        .footer {
-            margin-top: 40px;
-            font-size: 0.9em;
-            color: #888;
-        }
-    </style>
+    #text {
+      display: inline-block;
+      border-right: 2px solid yellow;
+      animation: blink-caret 0.75s step-end infinite;
+      white-space: pre-wrap;
+      font-size: 18px;
+    }
+
+    @keyframes blink-caret {
+      from, to { border-color: transparent; }
+      50% { border-color: yellow; }
+    }
+
+    .music-button {
+      font-size: 30px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: pink;
+      margin-top: 20px;
+    }
+
+    .music-button:hover {
+      transform: scale(1.1);
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>== Separuh Aku - Noah ==</h1>
-        <div id="lyrics-display"></div>
-        <div class="footer">// Code by Micola Arighi</div>
-    </div>
 
-    <script>
-        const lirikData = [
-            { text: "Dengar Laraku", charDelay: 100 }, // 0.1s
-            { text: "Suara hati ini memanggil namamu", charDelay: 90 }, // 0.09s
-            { text: "Karena separuh aku", charDelay: 90 },
-            { text: "Menyentuh laramu", charDelay: 90 },
-            { text: "Semua lukamu t'lah menjadi lirihku", charDelay: 90 },
-            { text: "Kar'na separuh aku", charDelay: 90 },
-            { text: "Dirimu", charDelay: 90 },
-        ];
+<canvas id="stars"></canvas>
 
-        const lineDelays = [300, 200, 300, 400, 600, 300, 300]; // in milliseconds
+<div class="container">
+  <video autoplay muted loop playsinline>
+    <source src="https://files.catbox.moe/0jxdm4.jpg" type="video/jpg">
+    Browser kamu tidak support video.
+  </video>
+  <div id="text"></div>
+  <button id="toggleMusic" class="music-button">💓</button>
+</div>
 
-        const lyricsDisplay = document.getElementById('lyrics-display');
-        let lineIndex = 0;
+<audio id="music" loop>
+  <source src="https://files.catbox.moe/ixgvzi.mp3" type="audio/mp3">
+</audio>
 
-        async function typeWriterEffect() {
-            if (lineIndex < lirikData.length) {
-                const currentLineData = lirikData[lineIndex];
-                const text = currentLineData.text;
-                const charDelay = currentLineData.charDelay;
-                const lineDelay = lineDelays[lineIndex];
+<script>
+  // Background bintang jatuh
+  const canvas = document.getElementById("stars");
+  const ctx = canvas.getContext("2d");
+  let w, h;
+  let stars = [];
 
-                const p = document.createElement('p');
-                p.classList.add('lyric-line');
-                lyricsDisplay.appendChild(p);
+  function resizeCanvas() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
 
-                for (let i = 0; i < text.length; i++) {
-                    p.textContent += text.charAt(i);
-                    await new Promise(resolve => setTimeout(resolve, charDelay));
-                }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
 
-                lineIndex++;
-                await new Promise(resolve => setTimeout(resolve, lineDelay));
-                typeWriterEffect(); // Call itself for the next line
-            }
-        }
+  function createStars() {
+    stars = [];
+    for (let i = 0; i < 150; i++) {
+      stars.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        size: Math.random() * 1.5,
+        speed: Math.random() * 1 + 0.3
+      });
+    }
+  }
 
-        // Start the effect when the page loads
-        document.addEventListener('DOMContentLoaded', typeWriterEffect);
-    </script>
+  function drawStars() {
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "white";
+    ctx.shadowBlur = 5;
+    ctx.shadowColor = "white";
+    for (let star of stars) {
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+      ctx.fill();
+      star.y += star.speed;
+      if (star.y > h) {
+        star.y = 0;
+        star.x = Math.random() * w;
+      }
+    }
+    requestAnimationFrame(drawStars);
+  }
+
+  createStars();
+  drawStars();
+
+  // Efek ketik
+  const fullText = 'Maaf atas perjalanan yang tidak sempurna
+Namun percayalah, untukmu kujual dunia
+Segala hal kuupayakan untuk melindungi (untuk melindungi)
+Tunggu aku kembali lagi esok pagi (selalu janjiku pada dirimu)
+Tumbuh lebih baik, cari panggilanmu
+Jadi lebih baik dibanding diriku
+Dan tertawalah saat ini selepas-lepasnya
+Kar'na kelak kau 'kan tersakiti
+Aku tahu kamu hebat
+Namun, s'lamanya diriku pasti berkutat
+'Tuk s'lalu jauhkanmu dari dunia yang jahat
+Ini sumpahku padamu 'tuk biarkanmu
+Tumbuh lebih baik, cari panggilanmu
+Jadi lebih baik dibanding diriku
+'Tuk sementara kita tertawakan berbagai hal
+Yang lucu dan lara selepas lepasnya
+Saat dewasa kau 'kan mengerti`;
+  const teksEl = document.getElementById("text");
+  let i = 0;
+
+  function typeWriter() {
+    if (i < fullText.length) {
+      teksEl.innerHTML += fullText.charAt(i);
+      i++;
+      setTimeout(typeWriter, 100);
+    }
+  }
+
+  typeWriter();
+
+  // Musik player play💝
+  const btn = document.getElementById("toggleMusic");
+  const music = document.getElementById("music");
+
+  btn.addEventListener("click", () => {
+    if (music.paused) {
+      music.play();
+      btn.textContent = "💝";
+    } else {
+      music.pause();
+      btn.textContent = "play";
+    }
+  });
+</script>
+
 </body>
 </html>
